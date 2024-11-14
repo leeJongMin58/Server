@@ -1,4 +1,5 @@
 import * as tweetRepository from '../data/tweet.js'
+import { getSocketIo } from '../connection/socket.js'
 
 // 해당 유저네임에 대한 트윗 가져오기
 export async function getTweets(req, res) {
@@ -19,11 +20,12 @@ export async function getTweetById(req, res) {
     }
 }
 
-// 트윗하기
+// 트윗을 생성하는 함수
 export async function createTweet(req, res) {
     const {username, name, text} = req.body
     tweetRepository.createTweet(username, name, text)
     res.status(201).json(tweets)
+    getSocketIo().emit('tweets', tweet)
 }
 
 // 트윗수정하기
