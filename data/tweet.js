@@ -1,27 +1,22 @@
 let tweets = [
     {
-        id:'1',
-        name:'김사과',
-        username:'apple',
+        tweetId:'1',
+        userId: '1',
         text:'안녕하세요',
         createdAt: Date.now().toString(),
-        url:'https://img.freepik.com/premium-photo/young-asian-man-her-clean-face-with-fresh-healthy-skin-ai-generated_145713-6656.jpg'
     },
     {
-        id:'2',
-        name:'반하나',
-        username:'banana',
+        tweetId:'2',
+        userId: '2',
         text:'반갑습니다.',
         createdAt: Date.now().toString(),
-        url:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgpT8yRTTzT0wwt-K19TAywSRUT8NUmmPA5g&s'
     },
     {
-        id:'3',
-        name:'오렌지',
+        tweetId:'2',
+        userId: '1',
         username:'orange',
         text:'첫 트윗',
         createdAt: Date.now().toString(),
-        url:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqwYMuvhufPTEWql7YBJJBYx1Bp9xYwgYFtA&s'
     }
 ]
 
@@ -36,7 +31,7 @@ export async function getAllByUsername(username) {
 }
 
 // id에 대한 트윗을 리턴
-export async function getAllById(id) {
+export async function getById(id) {
     return tweets.find((tweet) => tweet.id === id)
 }
 

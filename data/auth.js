@@ -2,7 +2,7 @@ let users = [
     {
         id: '1',
         username: 'apple',
-        password: '1111',
+        password: '$2b$10$FtnVIjCnuBfMqv9j7SKWYeNzyNRDlVT/A2vUXBB7bCgrQSR1Ghj2K',
         name: '김사과',
         email: 'apple@apple.com',
         url: ''
@@ -10,7 +10,7 @@ let users = [
     {
         id: '2',
         username: 'banana',
-        password: '2222',
+        password: '$2b$10$L6Fma/uIZ63U5uLvwobkaunY/KBo6Ogo5At7ImQ6tTgZ2smTsCuTu',
         name: '반하나',
         email: 'banaan@banana.com',
         url: ''
@@ -18,7 +18,7 @@ let users = [
     {
         id: '3',
         username: 'orange',
-        password: '3333',
+        password: '$2b$10$qcskHk17/QBS07zfs3gA0eklm2RP2hKU5G8onOnvjhu6YxzwiGnca',
         name: '오렌지',
         email: 'orange@orange.com',
         url: ''
@@ -28,10 +28,10 @@ let users = [
 export async function createUser(username, password, name, email){
     const user = {
         id: '4',
-        username: username,
-        password: password,
-        name: name,
-        email: email,
+        username,
+        password,
+        name,
+        email,
         url:'https://aws-cdn.peanutoon.com/POCSTORAGE3/compression/jpeg/comic/4049/60644/EPI_COVER_IMG_060644_20191103_080656_143.jpeg'
     }
     users = [user, ...users]
@@ -52,3 +52,6 @@ export async function isLogin(username, hashedPW) {
     return false   
 }
 
+export async function findById(id) {
+    return users.find((user) => user.id === id)
+}
