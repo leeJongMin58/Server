@@ -22,10 +22,10 @@ export async function getTweetById(req, res) {
 
 // 트윗을 생성하는 함수
 export async function createTweet(req, res) {
-    const {username, name, text} = req.body
-    tweetRepository.createTweet(username, name, text)
-    res.status(201).json(tweets)
-    getSocketIo().emit('tweets', tweet)
+    const {text} = req.body
+    tweetRepository.createTweet(text, req.userId)
+    res.status(201).json(text)
+    getSocketIo().emit('tweets', text)
 }
 
 // 트윗수정하기
