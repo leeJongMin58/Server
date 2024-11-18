@@ -1,41 +1,82 @@
-import { db } from '../db/database.js'
+import SQ, { DataTypes, Sequelize } from 'sequelize'
+import { sequelize } from '../db/database.js'
+import { User } from './auth.js'
 
-const SELECT_JOIN = 'SELECT tw.id, u.username, u.name, u.url, tw.userId, tw.text, tw.createdAt FROM users as u JOIN tweets as tw ON u.id = tw.userId'
+export const Tweet = sequelize.define(
+    'tweet',
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true
+        },
+        text: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+    },
+)
 
-const ORDER_DESC = 'ORDER BY tw.createdAt DESC'
+Tweet.belongsTo(User)
 
-// 모든 트윗을 리턴
+const INCLUDE_USER = {
+    attributes: [
+        'id',
+        'text',
+        'createdAt',
+        'userId',
+        [Sequelize.col('user.name'), 'name'],
+        [Sequelize.col('user.username'), 'username'],
+        [Sequelize.col('user.url'), 'url'],
+    ],
+    include: {
+        model: User,
+        attributes: []
+    }
+}
+
+const ORDER_DESC = {
+    order: [['createdAt', 'DESC']]
+}
+
 export async function getAll() {
-    return db.execute(`${SELECT_JOIN} ${ORDER_DESC}`)
-        .then((result) => result[0])
+    return Tweet.findAll({ ...INCLUDE_USER, ...ORDER_DESC })
 }
 
-// username에 대한 트윗을 리턴
 export async function getAllByUsername(username) {
-    return db.execute(`${SELECT_JOIN} WHERE u.username=?`,[username])
-    .then((result) => result[0])
+    return Tweet.findAll({
+        ...INCLUDE_USER,
+        ...ORDER_DESC,
+        include: {
+            ...INCLUDE_USER.include,
+            where: { username }
+        }
+    })
 }
 
-// 글 번호에 대한 트윗을 리턴
 export async function getById(id) {
-    return db.execute(`${SELECT_JOIN} WHERE tw.id=?`, [id]).then((result) => result[0][0])
+    return Tweet.findAll({
+        ...INCLUDE_USER,
+        where: {id}
+    })
 }
 
-// 새로운 트윗 작성
-export async function createTweet(text, userId) { 
-    return db.execute(`INSERT INTO tweets (userId, text, createdAt) VALUES(?,?,?)`, 
-        [userId, text, new Date()])
-        .then((result) => getById(result[0].insertId))
-
+export async function createTweet(text, userId) {
+    return Tweet.create({text, userId})
+        .then((data) => this.getById(data.dataValues.id))
 }
 
-export async function updateTweet(id, text) {
-    return db.execute(`UPDATE tweets SET text=? WHERE id=?`, [text, id])
-        .then(() => getById(id))
+export async function update(id, text) {
+    return Tweet.findByPk(id, INCLUDE_USER)
+        .then((tweet) => {
+            tweet.text = text
+            return tweet.save()
+        })
 }
 
-// 트윗을 삭제
-export async function removeTweet(id) {
-    return db.execute('DELETE FROM tweets WHERE id=?', [id])
+export async function remove(id) {
+    return Tweet.findByPk(id).then((tweet) => {
+        tweet.destroy()
+    })
 }
-
